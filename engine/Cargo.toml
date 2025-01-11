@@ -1,0 +1,13 @@
+[package]
+name = "engine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rayon.workspace = true
+renderer.workspace = true
+winit.workspace = true
+
+[features]
+default = ["rendering"]
+rendering = []

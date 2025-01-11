@@ -1,8 +1,16 @@
 [workspace]
 resolver = "2"
-members = [
-    "entry",
+members = [ 
+    "app", 
+    "engine", 
+    "renderer",
 ]
+
+[workspace.dependencies.engine]
+path = "engine"
+
+[workspace.dependencies.renderer]
+path = "renderer"
 
 [workspace.dependencies]
 hashbrown = "0.15.1"

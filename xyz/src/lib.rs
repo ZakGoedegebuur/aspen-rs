@@ -1,24 +1,35 @@
-use std::{thread::sleep, time::{Duration, Instant}};
+mod timing;
 
 use hashbrown::HashMap;
 use timing::Timer;
 use winit::{application::ApplicationHandler, event::WindowEvent, event_loop::{ActiveEventLoop, ControlFlow, EventLoop, EventLoopProxy}, window::{Window, WindowAttributes, WindowId}};
 
-mod timing;
+pub struct Engine {
+    el: EventLoop<GlobalEvent>,
+}
 
-pub fn main() {
-    let mut timer = Timer::new();
-    let event_loop = EventLoop::<GlobalEvent>::with_user_event().build().unwrap();
+impl Engine {
+    pub fn new() -> Result<Self, AppError> {
+        let el = EventLoop::<GlobalEvent>::with_user_event().build().unwrap();
+        Ok(Self {
+            el,
+        })
+    }
 
-    let mut app = App::new(&event_loop);
-    event_loop.run_app(&mut app).unwrap();
+    pub fn run(self) -> Result<AppExitInfo, AppError> {
+        let mut app = App::new(&self.el).unwrap();
+        self.el.run_app(&mut app).unwrap();
+        Ok(AppExitInfo::NoInfo)
+    }
+}
 
-    //loop {
-    //    match timer.update(100) {
-    //        t if t.fixed_steps > 0 => println!("{:#?}", t),
-    //        _ => (),
-    //    }
-    //}
+#[derive(Debug)]
+pub enum AppError {
+}
+
+#[derive(Debug)]
+pub enum AppExitInfo {
+    NoInfo
 }
 
 struct RenderContext {
@@ -38,7 +49,7 @@ struct App {
 }
 
 impl App {
-    pub fn new(event_loop: &EventLoop<GlobalEvent>) -> Self {
+    pub fn new(event_loop: &EventLoop<GlobalEvent>) -> Result<Self, AppError> {
         Self {
             timer: Timer::new(),
             event_loop_proxy: event_loop.create_proxy(),
@@ -111,16 +122,4 @@ impl ApplicationHandler<GlobalEvent> for App {
             GlobalEvent::Update => ()//println!("msg 2")
         }
     }
-}
-
-fn fixed_update() {
-
-}
-
-fn update() {
-
-}
-
-fn render() {
-    println!("render() called")
 }
